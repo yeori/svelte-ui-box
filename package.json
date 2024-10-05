@@ -9,6 +9,15 @@
 		"name": "yeori",
 		"email": "yeori.seo@gmail.com"
 	},
+	"license": "MIT",
+	"repository": {
+		"url": "https://github.com/yeori/svelte-ui-box",
+		"type": "git"
+	},
+	"bugs": {
+		"url": "https://github.com/yeori/svelte-ui-box/issues",
+		"email": "yeori.seo@gmail.com"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build && npm run package",
