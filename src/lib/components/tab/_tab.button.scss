@@ -1,0 +1,15 @@
+button.tab-btn {
+	background-color: white;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 4px 6px;
+	font-size: 0.9rem;
+	&:hover {
+		background-color: #65aaff;
+	}
+	&.active {
+		background-color: #0b56b1;
+		color: white;
+	}
+}
