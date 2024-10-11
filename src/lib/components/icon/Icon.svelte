@@ -1,69 +1,35 @@
 <script lang="ts">
   import { UIHelper } from '$lib/helper.js';
-  /**
-   * icon - path of icon
-   */
-  export let icon: string | undefined = undefined;
-  export let type: 'mask' | 'manual' = 'mask';
-  export let size: 'xs' | 'sm' | 'md' = 'sm';
-  export let xsSize = '1rem';
-  export let smSize = '1.25rem';
-  export let mdSize = '1.50rem';
-  export let active = false;
-  /**
-   * secify the icon sizes using array format. It has 3 value [string, number, number]
-   *  - sizeRatio[0] is the size of xs icon like '1rem', '12px' etc.
-   *  - sizeRatio[1] and sizeRatio[2] are proportions to `sizeRatio[0]` like `1.24`
-   *
-   * example
-   *```svelte
-   * <script>
-   *  const iconRatio = ['0.9rem', 1.2, 1.4]
-   * </scipt>
-   *
-   * <Icon ratio={iconRatio} size="xs" icon='/images/hover.svg'>
-   * <Icon ratio={iconRatio} size="sm" icon='/images/close.svg'>
-   * <Icon ratio={iconRatio} size="md" icon='/images/brand.svg'>
-   *
-   * * `hover.svg' is 0.9rem
-   * * `close.svg` is 1.08rem
-   * * `brand.svg` is 1.26rem
-   * ```
-   *
-   * @default undefined
-   *
-   */
-  export let ratio: [string, number, number] | undefined = undefined;
-  /**
-   * icon color.
-   * If type is `mask`, it is background color for masking effect.
-   * If type is `manual`, is is not used.
-   */
-  export let color: string | undefined = undefined;
-  export let flip = false;
-  export let spin: boolean = false;
-  export let rotate: number = 0;
+  import { getContext } from 'svelte';
+  import type { IconModel } from './icon.model.js';
+  import { SvelteUiBox } from '$lib/svelte.ui.box.js';
+  export let model: IconModel;
   export { clazz as class };
   let clazz = '';
+
+  const ctx = SvelteUiBox.load(getContext);
+  ctx.resolveIcon(model);
+
   const mergeIconSize = (style: Record<string, string>) => {
+    const { xsSize, smSize, mdSize } = model;
     let xs = xsSize;
     let sm = smSize;
     let md = mdSize;
-    if (ratio) {
-      xs = ratio[0];
-      const [base, unit] = UIHelper.parseSizeUnit(xs);
-      sm = `${base * ratio[1]}${unit}`;
-      md = `${base * ratio[2]}${unit}`;
-    }
+
     style['icon-xs-size'] = xs;
     style['icon-sm-size'] = sm;
     style['icon-md-size'] = md;
   };
-  const resolveManualStyle = () => {
+  const resolveMaskStyle = () => {
+    const icon = ctx.resolveIconPath(model);
+    const { rotate, color, xsSize, smSize, mdSize } = model;
     const style: Record<string, string> = {
       'icon-rotate': `${rotate}deg`,
       'icon-path': `url(${icon || 'empty'})`,
-      'background-color': color || '#777'
+      'background-color': color || '#777',
+      'icon-xs-size': xsSize,
+      'icon-sm-size': smSize,
+      'icon-md-size': mdSize
     };
     mergeIconSize(style);
     return UIHelper.resolveStyles(style, 'box');
@@ -71,13 +37,12 @@
 </script>
 
 <span
-  class="icon {type} {size} {clazz}"
-  class:flip={rotate && flip}
-  class:spin
-  class:active
-  class:empty={!icon}
-  style={type === 'mask' ? resolveManualStyle() : ''}
-  >{#if type === 'manual'}{icon || ''}{/if}</span
+  class="icon {$model.type} {$model.size} {clazz}"
+  class:spin={$model.spin}
+  class:active={$model.active}
+  class:empty={!$model.icon}
+  style={$model.type === 'mask' ? resolveMaskStyle() : ''}
+  >{#if $model.type === 'manual'}{$model.icon || ''}{/if}</span
 >
 
 <style lang="scss">

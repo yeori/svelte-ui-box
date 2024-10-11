@@ -19,4 +19,27 @@ export class UIHelper {
       return [1, 'rem'];
     }
   };
+  /**
+   * It replaces `Objec.keys()`
+   * @param src
+   * @returns
+   */
+  static keys<K extends object>(src: K) {
+    return Object.keys(src) as (keyof K)[];
+  }
+  static concatPath(...pathes: string[]): string {
+    return pathes
+      .filter((path) => path.trim().length > 0)
+      .map((path, index) => {
+        path = path.trim();
+        if (index > 0) {
+          path = path.replace(/^\/+/, '');
+        }
+        if (index < pathes.length - 1) {
+          path = path.replace(/\/+$/, '');
+        }
+        return path;
+      })
+      .join('/');
+  }
 }
