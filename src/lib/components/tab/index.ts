@@ -6,6 +6,6 @@ export { default as TabNavBar } from './TabNavBar.svelte';
 export { default as TabView } from './TabView.svelte';
 
 export type TabContextType<K extends string | symbol> = {
-	model: SelectionModel<K>;
-	dispatch: EventDispatcher<Record<string, unknown>>;
+  model: SelectionModel<K>;
+  dispatch: EventDispatcher<Record<string, unknown>>;
 };

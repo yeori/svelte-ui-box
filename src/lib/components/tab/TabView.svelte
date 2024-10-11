@@ -1,16 +1,16 @@
 <script lang="ts" strictEvents generics="K extends string | symbol, E extends Record<string, any>">
-	import type { SelectionModel } from '../model/selection/selection.model.js';
-	import { createEventDispatcher, setContext } from 'svelte';
-	import TabContent from './TabContent.svelte';
+  import type { SelectionModel } from '../model/selection/selection.model.js';
+  import { createEventDispatcher, setContext } from 'svelte';
+  import TabContent from './TabContent.svelte';
 
-	export let model: SelectionModel<K>;
-	export let contentRendering: 'auto' | 'manual' = 'manual';
+  export let model: SelectionModel<K>;
+  export let contentRendering: 'auto' | 'manual' = 'manual';
 
-	const dispatch = createEventDispatcher<E>();
-	setContext('model', { model, dispatch });
+  const dispatch = createEventDispatcher<E>();
+  setContext('model', { model, dispatch });
 
-	const watchModel = (model: SelectionModel<K>) => {};
-	$: watchModel($model);
+  const watchModel = (model: SelectionModel<K>) => {};
+  $: watchModel($model);
 </script>
 
 <!--
@@ -176,17 +176,17 @@ Then, you can receive event `"profile"` at `<TabView/>`
 ```
 -->
 <div class="tabview">
-	<slot />
-	{#if contentRendering === 'auto'}
-		{#each $model.items as tab}
-			{@const props = { ...tab.getProps(), dispatch }}
-			<TabContent key={tab.key}><svelte:component this={tab.content?.ui} {...props} /></TabContent>
-		{/each}
-	{/if}
+  <slot />
+  {#if contentRendering === 'auto'}
+    {#each $model.items as tab}
+      {@const props = { ...tab.getProps(), dispatch }}
+      <TabContent key={tab.key}><svelte:component this={tab.content?.ui} {...props} /></TabContent>
+    {/each}
+  {/if}
 </div>
 
 <style lang="scss">
-	.tabview {
-		display: contents;
-	}
+  .tabview {
+    display: contents;
+  }
 </style>
