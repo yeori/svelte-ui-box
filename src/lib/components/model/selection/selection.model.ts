@@ -68,12 +68,12 @@ export class SelectionModel<K extends string | symbol | number> extends SvelteSt
   }
   /**
    * makes the given tab active(visible)
-   * @param tab tab to visible
+   * @param item tab to visible
    * @param strict if true, it throw error when no tab found.
    * @returns
    */
-  selectTab(tab: SelectionItem<K>, strict: boolean = false) {
-    const idx = this._items.findIndex((elem) => elem.equals(tab));
+  selectItem(item: SelectionItem<K>, strict: boolean = false) {
+    const idx = this._items.findIndex((elem) => elem.equals(item));
     this._selectByIndex(idx, strict);
   }
   /**

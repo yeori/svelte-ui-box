@@ -1,5 +1,6 @@
 import { UIHelper } from '$lib/helper.js';
 import { SvelteStore } from '$lib/store/index.js';
+import { UnitSizeList, type UnitSize } from '$lib/svelte.ui.type.js';
 import { writable, type Writable } from 'svelte/store';
 
 export interface IconParam {
@@ -11,52 +12,11 @@ export interface IconParam {
    *
    * @default "mask"
    */
-  type?: 'mask' | 'manual';
+  type?: 'mask' | 'bg';
   /**
    * @default "sm"
    */
-  size?: 'xs' | 'sm' | 'md';
-  /**
-   * extra samll size
-   * @default "1rem"
-   */
-  xsSize?: string;
-  /**
-   * extra samll size
-   * @default "1.2rem"
-   */
-  smSize?: string;
-  /**
-   * extra samll size
-   * @default "1.4rem"
-   */
-  mdSize?: string;
-  active?: boolean;
-  /**
-   * secify the icon sizes using array format. It has 3 value [string, number, number]
-   *  - sizeRatio[0] is the size of xs icon like '1rem', '12px' etc.
-   *  - sizeRatio[1] and sizeRatio[2] are proportions to `sizeRatio[0]` like `1.24`
-   *
-   * example
-   *```svelte
-   * <script>
-   *  const iconRatio = ['0.9rem', 1.2, 1.4]
-   * </scipt>
-   *
-   * <Icon ratio={iconRatio} size="xs" icon='/images/hover.svg'>
-   * <Icon ratio={iconRatio} size="sm" icon='/images/close.svg'>
-   * <Icon ratio={iconRatio} size="md" icon='/images/brand.svg'>
-   *
-   * * `hover.svg' is 0.9rem
-   * * `close.svg` is 1.08rem
-   * * `brand.svg` is 1.26rem
-   * ```
-   *
-   * @default undefined
-   * @override 'xsSize', 'smSize', 'mdSize'
-   *
-   */
-  ratio?: [string, number, number] | undefined;
+  size?: UnitSize | string;
   /**
    * icon color.
    * If type is `mask`, it is background color for masking effect.
@@ -67,14 +27,10 @@ export interface IconParam {
   rotate?: number;
 }
 export class IconModel extends SvelteStore<IconModel> implements IconParam {
-  icon: string | undefined;
-  type: 'mask' | 'manual' = 'mask';
-  size: 'xs' | 'sm' | 'md' = 'sm';
-  xsSize: string = '1rem';
-  smSize: string = '1.2rem';
-  mdSize: string = '1.4rem';
-  active: boolean = false;
-  ratio: [string, number, number] | undefined;
+  icon: string | undefined = undefined;
+  type: 'mask' | 'bg' = 'mask';
+  size: UnitSize | string = 'sm';
+  ratio: [string, string, string] | undefined = undefined;
   color: string | undefined = undefined;
   spin: boolean = false;
   rotate: number = 0;
@@ -82,25 +38,14 @@ export class IconModel extends SvelteStore<IconModel> implements IconParam {
   constructor() {
     super();
   }
-  private _resize() {
-    const { ratio } = this;
-    if (!ratio) {
-      return;
-    }
-    const xs = ratio[0];
-    const [base, unit] = UIHelper.parseSizeUnit(xs);
-    const sm = `${base * ratio[1]}${unit}`;
-    const md = `${base * ratio[2]}${unit}`;
-    this.xsSize = xs;
-    this.smSize = sm;
-    this.mdSize = md;
-    this.ratio = [...ratio];
+  isCustomSize() {
+    return !UnitSizeList.includes(this.size as UnitSize);
+  }
+  getSizeClass() {
+    return this.isCustomSize() ? 'custom' : this.size;
   }
   flush<K extends keyof IconParam>(key: K, value: IconParam[K], repaint: boolean = true) {
     (this as IconParam)[key] = value;
-    if (key === 'ratio') {
-      this._resize();
-    }
     if (repaint) {
       this.update();
     }
@@ -113,7 +58,6 @@ export class IconModel extends SvelteStore<IconModel> implements IconParam {
       .forEach((prop) => {
         (model[prop] as IconParam[keyof IconParam]) = param[prop];
       });
-    model._resize();
     return model as IconModel;
   }
 }

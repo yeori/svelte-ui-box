@@ -17,5 +17,5 @@
 <button
   class="tab-btn"
   class:active={$model.isActive(tab.key)}
-  on:click={() => model.selectTab(tab)}>{tab.label}</button
+  on:click={() => model.selectItem(tab)}>{tab.label}</button
 >

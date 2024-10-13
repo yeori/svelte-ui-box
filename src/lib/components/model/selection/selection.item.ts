@@ -11,7 +11,7 @@ export type SelectionItemLiteral<K extends string | symbol | number, D = never> 
   userData?: D;
   content?: TabContentOption;
 };
-export class SelectionItem<K, D = never> {
+export class SelectionItem<K, D = unknown> {
   constructor(
     readonly key: K,
     public label: string,
