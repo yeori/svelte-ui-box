@@ -3,4 +3,5 @@
 - button
 - icon
 - tab
+- chip
 - svelte score class

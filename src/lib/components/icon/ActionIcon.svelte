@@ -6,6 +6,7 @@
 
   export let test: string | undefined = undefined;
   export let param: IconButtonParam;
+  export let stop: boolean = false;
   export let dispatch = createEventDispatcher<{ click: ButtonModel; toggle: ButtonModel }>();
 
   const ctx = SvelteUiBox.load(getContext);
@@ -25,7 +26,10 @@
     }
   }
 
-  const clicked = () => {
+  const clicked = (e: Event) => {
+    if (stop) {
+      e.stopPropagation();
+    }
     const toggleBtn = model.isToggleButton();
     if (toggleBtn) {
       model.toggle();

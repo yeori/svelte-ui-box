@@ -1,4 +1,5 @@
 import type { ButtonModel } from './components/button/button.model.js';
+import type { ChipModel } from './components/chip/chip.model.js';
 import type { IconModel } from './components/index.js';
 import { CssVar } from './cssvar.js';
 import { UIHelper } from './helper.js';
@@ -44,6 +45,10 @@ export class SvelteUiBox<C extends string> {
   resolveButton(buttonModel: ButtonModel): string {
     const { theme } = this;
     return theme!.resolveButton(buttonModel);
+  }
+  resolveChip(chipModel: ChipModel): string {
+    const { theme } = this;
+    return theme!.resolveChip(chipModel);
   }
   setSize(name: string, style: Record<string, string>) {
     this.sizes[name] = new CssVar(`${this.prefix}-${name}`, style);

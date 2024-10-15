@@ -1,4 +1,5 @@
 import type { ButtonModel, ButtonState } from './components/button/button.model.js';
+import type { ChipModel } from './components/chip/chip.model.js';
 import type { IconParam, IconModel } from './components/index.js';
 import { UIHelper } from './helper.js';
 import type { ColorDef } from './svelte.ui.type.js';
@@ -7,6 +8,7 @@ import { ThemeEntity } from './theme.entity.js';
 export class ThemeDef<C extends string> {
   readonly icons: Record<string, IconParam>;
   readonly buttons: ThemeEntity[] = [];
+  readonly chips: ThemeEntity[] = [];
   readonly colorSet: Record<C, ColorDef> = {} as Record<C, ColorDef>;
   constructor(readonly prefix = 'svelteuibox') {
     this.icons = {};
@@ -102,7 +104,26 @@ export class ThemeDef<C extends string> {
     views.push(size);
     return views.join(';');
   }
-  setStyle(def: { button?: Record<ButtonState, Partial<CSSStyleDeclaration>> }) {
+  resolveChip(model: ChipModel): string {
+    const views = [];
+    const { round } = model;
+    const customSize: Record<string, string> = {};
+    if (round) {
+      customSize['chip-border-radius'] = round;
+    }
+    const { style } = model;
+    if (style) {
+      const pairs = UIHelper.parseCssDeclaration(style);
+      views.push(...pairs.map((pair) => `${pair[0]}: ${pair[1]}`));
+    }
+    const size = UIHelper.resolveStyles(customSize, this.prefix);
+    views.push(size);
+    return views.join(';');
+  }
+  setStyle(def: {
+    button?: Record<ButtonState, Partial<CSSStyleDeclaration>>;
+    chip?: Partial<CSSStyleDeclaration>;
+  }) {
     if (def.button) {
       const styleDef = def.button;
       const entities = UIHelper.keys(styleDef).map((state) => {
@@ -111,10 +132,15 @@ export class ThemeDef<C extends string> {
       });
       this.buttons.push(...entities);
     }
+    if (def.chip) {
+      this.chips.push(new ThemeEntity(this.prefix, 'chip', 'normal', def.chip));
+    }
   }
   insallTheme(el: HTMLElement) {
-    const views = this.buttons.flatMap((entity) => entity.getVariabels());
-    views.forEach(([k, v]) => {
+    const button = this.buttons.flatMap((entity) => entity.getVariabels());
+    const chip = this.chips.flatMap((entity) => entity.getVariabels());
+
+    [...button, ...chip].forEach(([k, v]) => {
       el.style.setProperty(k, v);
     });
   }
