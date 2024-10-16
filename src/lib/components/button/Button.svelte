@@ -1,5 +1,5 @@
 <script lang="ts" strictEvents>
-  import { createEventDispatcher, getContext } from 'svelte';
+  import { createEventDispatcher, getContext, onMount } from 'svelte';
   import { ButtonModel, type ButtonParam } from './button.model.js';
   import Icon from '../icon/Icon.svelte';
   import { SvelteUiBox } from '$lib/svelte.ui.box.js';
@@ -7,7 +7,11 @@
 
   export let test: string | undefined = undefined;
   export let param: ButtonParam;
-  export let dispatch = createEventDispatcher<{ click: ButtonModel; toggle: ButtonModel }>();
+  export let dispatch = createEventDispatcher<{
+    model: ButtonModel;
+    click: ButtonModel;
+    toggle: ButtonModel;
+  }>();
 
   const ctx = SvelteUiBox.load(getContext);
   const model = ButtonModel.create(param);
@@ -39,6 +43,9 @@
       el.dataset.testid = test;
     }
   };
+  onMount(() => {
+    dispatch('model', model);
+  });
 </script>
 
 <button
