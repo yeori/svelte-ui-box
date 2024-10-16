@@ -94,6 +94,25 @@ export class SelectionModel<K extends string | symbol | number> extends SvelteSt
       {} as Record<K, K>
     );
   }
+  addItem(item: SelectionItem<K>, strict: boolean = true): SelectionItem<K> | undefined {
+    const duplicated = this._items.find((elem) => elem.equals(item));
+    if (duplicated && strict) {
+      throw new Error(`duplicated item [${item.label}]`);
+    }
+    this._items.push(item);
+    this.update();
+    return duplicated ? undefined : item;
+  }
+  removeItem(item: SelectionItem<K>, strict: boolean = true): SelectionItem<K> | undefined {
+    const idx = this._items.findIndex((elem) => elem.equals(item));
+    const notFound = idx < 0;
+    if (notFound && strict) {
+      throw new Error(`no such item [${item.label}]`);
+    }
+    this._items.splice(idx, 1);
+    this.update();
+    return notFound ? undefined : item;
+  }
   /**
    * It build model instance from the given liternal definition.
    *
