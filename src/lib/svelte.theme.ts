@@ -21,7 +21,7 @@ export class ThemeDef<C extends string> {
   }
   parseCssVar(style: Record<string, string>, target: string) {
     const prefix = `${this.prefix}-${target}`;
-    return UIHelper.resolveStyles(style, prefix);
+    return UIHelper.buildCssVar(style, prefix);
   }
   setIcon(prefix: string, iconParam: IconParam) {
     const { icon } = iconParam;
@@ -58,11 +58,11 @@ export class ThemeDef<C extends string> {
       return icon;
     }
   }
-  resolveIcon(param: IconModel) {
-    if (!param.icon) {
-      return param;
+  resolveIcon(model: IconModel) {
+    if (!model.icon) {
+      throw Error('icon required');
     }
-    let [prefix, icon] = param.icon.split(':');
+    let [prefix, icon] = model.icon.split(':');
     if (!icon) {
       icon = prefix;
       prefix = 'default';
@@ -82,11 +82,39 @@ export class ThemeDef<C extends string> {
           'rotate'
         ] as (keyof IconParam)[]
       ).forEach((prop) => {
-        this.setValue(param, prop, defaultIcon[prop]);
+        this.setValue(model, prop, defaultIcon[prop]);
       });
-    } else {
-      return param;
     }
+
+    const path = this.resolveIconPath(model);
+    const { rotate, color } = model;
+    const customStyle: Record<string, string> = {
+      rotate: `${rotate}deg`
+    };
+    if (path) {
+      customStyle['path'] = `url(${path})`;
+    } else {
+      model.flush('type', 'bg', false);
+    }
+    const { round } = model;
+    if (round) {
+      customStyle['border-raduis'] = round;
+    }
+    if (model.type === 'mask') {
+      customStyle['background-color'] = color || '#777';
+    }
+    if (model.isCustomSize()) {
+      customStyle['custom-size'] = model.size;
+    }
+    const cssVar = this.parseCssVar(customStyle, 'icon');
+    const { style } = model;
+    if (style) {
+      UIHelper.parseCssDeclaration(style).reduce((style, [prop, value]) => {
+        style[prop] = value;
+        return style;
+      }, cssVar);
+    }
+    return UIHelper.joinStyle(cssVar);
   }
   resolveButton(model: ButtonModel): string {
     const views = [];

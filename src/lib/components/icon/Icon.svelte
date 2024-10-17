@@ -9,28 +9,7 @@
 
   const model = IconModel.create(param);
   const ctx = SvelteUiBox.load(getContext);
-  ctx.resolveIcon(model);
 
-  const resolveMaskStyle = (model: IconModel) => {
-    const icon = ctx.resolveIconPath(model);
-    const { rotate, color } = model;
-    const style: Record<string, string> = {
-      rotate: `${rotate}deg`
-    };
-    if (icon) {
-      style['path'] = `url(${icon})`;
-    } else {
-      model.flush('type', 'bg', false);
-    }
-    if (model.type === 'mask') {
-      style['background-color'] = color || '#777';
-    }
-    if (model.isCustomSize()) {
-      style['custom-size'] = model.size;
-    }
-    const cssVar = ctx.parseCssVar(style, 'icon');
-    return cssVar;
-  };
   onMount(() => {
     dispatch('model', model);
   });
@@ -40,7 +19,8 @@
   class="icon {$model.type} {$model.getSizeClass()} {clazz}"
   class:spin={$model.spin}
   class:empty={!$model.icon}
-  style={resolveMaskStyle($model)}
+  class:round={$model.round}
+  style={ctx.resolveIcon($model)}
 ></span>
 
 <style lang="scss">
@@ -57,6 +37,9 @@
     }
     &.spin {
       animation: spin-icon 1s linear infinite;
+    }
+    &.round {
+      border-radius: var(--svelteuibox-icon-border-raduis);
     }
     &.xs {
       width: var(--svelteuibox-icon-size-xs, 0.9rem);

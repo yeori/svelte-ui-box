@@ -18,6 +18,10 @@ export interface IconParam {
    */
   size?: UnitSize | string;
   /**
+   * value for `border-radius` like "8px"
+   */
+  round?: string;
+  /**
    * icon color.
    * If type is `mask`, it is background color for masking effect.
    * If type is `manual`, is is not used.
@@ -25,15 +29,18 @@ export interface IconParam {
   color?: string | undefined;
   spin?: boolean;
   rotate?: number;
+  style?: Partial<CSSStyleDeclaration>;
 }
 export class IconModel extends SvelteStore<IconModel> implements IconParam {
   icon: string | undefined = undefined;
   type: 'mask' | 'bg' = 'mask';
   size: UnitSize | string = 'sm';
+  round: string | undefined;
   ratio: [string, string, string] | undefined = undefined;
   color: string | undefined = undefined;
   spin: boolean = false;
   rotate: number = 0;
+  style: Partial<CSSStyleDeclaration> | undefined;
   protected store: Writable<IconModel> = writable(this);
   constructor() {
     super();

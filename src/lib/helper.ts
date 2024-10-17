@@ -1,9 +1,27 @@
 export class UIHelper {
+  static buildCssVar(obj: Record<string, string>, prefix: string = ''): Record<string, string> {
+    const prefixName = prefix ? `${prefix}-` : '';
+    return Object.entries(obj).reduce(
+      (target, [name, value]) => {
+        const prop = `--${prefixName}${name}`;
+        target[prop] = value;
+        return target;
+      },
+      {} as Record<string, string>
+    );
+  }
   static resolveStyles(obj: Record<string, string>, prefix: string = ''): string {
     const prefixName = prefix ? `${prefix}-` : '';
     return Object.entries(obj)
       .map(([name, value]) => {
         return `--${prefixName}${name}: ${value}`;
+      })
+      .join(';');
+  }
+  static joinStyle(obj: Record<string, string>): string {
+    return Object.entries(obj)
+      .map(([name, value]) => {
+        return `${name}: ${value}`;
       })
       .join(';');
   }
