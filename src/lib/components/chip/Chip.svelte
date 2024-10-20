@@ -10,9 +10,9 @@
   const model = ChipModel.create(param);
 
   export let dispatch = createEventDispatcher<{
-    model: ChipModel;
-    click: ChipModel;
-    close: ChipModel;
+    model: ChipModel<U>;
+    click: ChipModel<U>;
+    close: ChipModel<U>;
   }>();
   onMount(() => {
     dispatch('model', model);
