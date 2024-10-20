@@ -1,10 +1,10 @@
-<script lang="ts">
+<script lang="ts" generics="U">
   import { createEventDispatcher, getContext, onMount } from 'svelte';
   import ActionIcon from '../icon/ActionIcon.svelte';
   import { ChipModel, type ChipParam } from './chip.model.js';
   import { SvelteUiBox } from '$lib/svelte.ui.box.js';
 
-  export let param: ChipParam;
+  export let param: ChipParam<U>;
 
   const ctx = SvelteUiBox.load(getContext);
   const model = ChipModel.create(param);

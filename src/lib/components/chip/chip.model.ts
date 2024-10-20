@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 import { type IconParam } from '../icon/icon.model.js';
 import { UIHelper } from '$lib/helper.js';
 
-export type ChipParam = {
+export type ChipParam<T> = {
   theme?: string;
   label: string;
   /**
@@ -31,9 +31,10 @@ export type ChipParam = {
   round?: string | undefined;
   border?: boolean;
   outline?: boolean;
+  userData?: T;
 };
 
-export class ChipModel extends SvelteStore<ChipModel> implements ChipParam {
+export class ChipModel<U = unknown> extends SvelteStore<ChipModel> implements ChipParam<U> {
   theme?: string | undefined;
   label: string = 'Chip';
   size: string = 'sm';
@@ -44,16 +45,17 @@ export class ChipModel extends SvelteStore<ChipModel> implements ChipParam {
   round: string = '2rem';
   border: boolean = true;
   outline?: boolean = false;
+  userData?: U;
   protected store = writable(this as ChipModel);
   constructor() {
     super();
   }
-  static create(param: ChipParam): ChipModel {
-    const model = new ChipModel();
+  static create<U = unknown>(param: ChipParam<U>): ChipModel<U> {
+    const model = new ChipModel<U>();
     UIHelper.keys(param)
       .filter((prop) => param[prop] !== undefined)
       .forEach((prop) => {
-        (model[prop] as ChipParam[keyof ChipParam]) = param[prop];
+        (model[prop] as ChipParam<U>[keyof ChipParam<U>]) = param[prop];
       });
     return model;
   }
