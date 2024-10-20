@@ -1,7 +1,7 @@
 {
   "name": "svelte-ui-box",
   "description": "UI components for svelte app.",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "keywords": [
     "svelte"
   ],
