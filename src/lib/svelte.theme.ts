@@ -7,6 +7,7 @@ import { ThemeEntity } from './theme.entity.js';
 
 export class ThemeDef<C extends string> {
   readonly icons: Record<string, IconParam>;
+  readonly bases: ThemeEntity[] = [];
   readonly buttons: ThemeEntity[] = [];
   readonly chips: ThemeEntity[] = [];
   readonly colorSet: Record<C, ColorDef> = {} as Record<C, ColorDef>;
@@ -59,31 +60,30 @@ export class ThemeDef<C extends string> {
     }
   }
   resolveIcon(model: IconModel) {
-    if (!model.icon) {
-      throw Error('icon required');
-    }
-    let [prefix, icon] = model.icon.split(':');
-    if (!icon) {
-      icon = prefix;
-      prefix = 'default';
-    }
-    const defaultIcon = this.icons[prefix];
-    if (defaultIcon) {
-      (
-        [
-          'color',
-          'ratio',
-          'xsSize',
-          'smSize',
-          'mdSize',
-          'type',
-          'active',
-          'spin',
-          'rotate'
-        ] as (keyof IconParam)[]
-      ).forEach((prop) => {
-        this.setValue(model, prop, defaultIcon[prop]);
-      });
+    if (model.icon) {
+      let [prefix, icon] = model.icon.split(':');
+      if (!icon) {
+        icon = prefix;
+        prefix = 'default';
+      }
+      const defaultIcon = this.icons[prefix];
+      if (defaultIcon) {
+        (
+          [
+            'color',
+            'ratio',
+            'xsSize',
+            'smSize',
+            'mdSize',
+            'type',
+            'active',
+            'spin',
+            'rotate'
+          ] as (keyof IconParam)[]
+        ).forEach((prop) => {
+          this.setValue(model, prop, defaultIcon[prop]);
+        });
+      }
     }
 
     const path = this.resolveIconPath(model);
@@ -149,9 +149,13 @@ export class ThemeDef<C extends string> {
     return views.join(';');
   }
   setStyle(def: {
+    base?: Partial<CSSStyleDeclaration>;
     button?: Record<ButtonState, Partial<CSSStyleDeclaration>>;
     chip?: Partial<CSSStyleDeclaration>;
   }) {
+    if (def.base) {
+      this.bases.push(new ThemeEntity(this.prefix, 'base', 'normal', def.base));
+    }
     if (def.button) {
       const styleDef = def.button;
       const entities = UIHelper.keys(styleDef).map((state) => {
@@ -165,10 +169,11 @@ export class ThemeDef<C extends string> {
     }
   }
   insallTheme(el: HTMLElement) {
+    const base = this.bases.flatMap((entity) => entity.getVariabels());
     const button = this.buttons.flatMap((entity) => entity.getVariabels());
     const chip = this.chips.flatMap((entity) => entity.getVariabels());
 
-    [...button, ...chip].forEach(([k, v]) => {
+    [...base, ...button, ...chip].forEach(([k, v]) => {
       el.style.setProperty(k, v);
     });
   }
