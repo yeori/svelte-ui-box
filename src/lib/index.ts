@@ -5,3 +5,4 @@ export * from './svelte.theme.js';
 export * from './svelte.ui.box.js';
 export * from './svelte.ui.type.js';
 export * from './theme.entity.js';
+export * from './util/index.js';
