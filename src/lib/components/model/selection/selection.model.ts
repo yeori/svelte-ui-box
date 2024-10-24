@@ -114,6 +114,37 @@ export class SelectionModel<K extends string | symbol | number, D = unknown> ext
     return notFound ? undefined : item;
   }
   /**
+   * Removes the first item in the `items` array that matches the provided predicate.
+   * If an item is found and removed, the method returns the removed item; otherwise, it returns `undefined`.
+   * After the removal, the `update` method is called to refresh the state.
+   *
+   * @template K - The type of the key for each `SelectionItem`.
+   * @template D - The type of the data associated with each `SelectionItem`.
+   *
+   * @param { (item: SelectionItem<K, D>) => boolean } predicate - A function that defines the condition to match the item to be removed. It receives each `SelectionItem` and should return `true` for the item to be removed.
+   *
+   * @returns { SelectionItem<K, D> | undefined } - Returns the removed item if found, otherwise `undefined` if no item matches the predicate.
+   *
+   * @example
+   * // Example usage:
+   * const removedItem = selectionManager.removeBy(item => item.key === 'someKey');
+   * if (removedItem) {
+   *   console.log('Removed:', removedItem);
+   * } else {
+   *   console.log('No matching item found');
+   * }
+   */
+  removeBy(predicate: (item: SelectionItem<K, D>) => boolean): SelectionItem<K, D> | undefined {
+    const idx = this.items.findIndex(predicate);
+    if (idx >= 0) {
+      const [deleted] = this.items.splice(idx, 1);
+      this.update();
+      return deleted;
+    } else {
+      return undefined;
+    }
+  }
+  /**
    * It build model instance from the given liternal definition.
    *
    * @template K type of unique key for each selectable items.
