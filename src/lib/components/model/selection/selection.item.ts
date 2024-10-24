@@ -5,7 +5,7 @@ export type TabContentOption = {
   props?: Record<string, unknown | (() => unknown)>;
   events?: Record<string, () => void>;
 };
-export type SelectionItemLiteral<K extends string | symbol | number, D = never> = {
+export type SelectionItemLiteral<K extends string | symbol | number, D = unknown> = {
   key: K;
   label: string;
   userData?: D;

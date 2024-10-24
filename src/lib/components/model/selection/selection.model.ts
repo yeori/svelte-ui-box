@@ -16,13 +16,13 @@ const checkDuplicatedKey = <K extends number | string | symbol>(
 /**
  *
  */
-export class SelectionModel<K extends string | symbol | number> extends SvelteStore<
-  SelectionModel<K>
+export class SelectionModel<K extends string | symbol | number, D = unknown> extends SvelteStore<
+  SelectionModel<K, D>
 > {
-  protected store: Writable<SelectionModel<K>>;
+  protected store: Writable<SelectionModel<K, D>>;
   private _index: number;
   private _Keys: Record<K, K>;
-  constructor(private readonly _items: SelectionItem<K>[]) {
+  constructor(private readonly _items: SelectionItem<K, D>[]) {
     super();
     this.store = writable(this);
     this._index = 0;
@@ -72,7 +72,7 @@ export class SelectionModel<K extends string | symbol | number> extends SvelteSt
    * @param strict if true, it throw error when no tab found.
    * @returns
    */
-  selectItem(item: SelectionItem<K>, strict: boolean = false) {
+  selectItem(item: SelectionItem<K, D>, strict: boolean = false) {
     const idx = this._items.findIndex((elem) => elem.equals(item));
     this._selectByIndex(idx, strict);
   }
@@ -94,7 +94,7 @@ export class SelectionModel<K extends string | symbol | number> extends SvelteSt
       {} as Record<K, K>
     );
   }
-  addItem(item: SelectionItem<K>, strict: boolean = true): SelectionItem<K> | undefined {
+  addItem(item: SelectionItem<K, D>, strict: boolean = true): SelectionItem<K, D> | undefined {
     const duplicated = this._items.find((elem) => elem.equals(item));
     if (duplicated && strict) {
       throw new Error(`duplicated item [${item.label}]`);
@@ -103,7 +103,7 @@ export class SelectionModel<K extends string | symbol | number> extends SvelteSt
     this.update();
     return duplicated ? undefined : item;
   }
-  removeItem(item: SelectionItem<K>, strict: boolean = true): SelectionItem<K> | undefined {
+  removeItem(item: SelectionItem<K, D>, strict: boolean = true): SelectionItem<K, D> | undefined {
     const idx = this._items.findIndex((elem) => elem.equals(item));
     const notFound = idx < 0;
     if (notFound && strict) {
@@ -120,13 +120,13 @@ export class SelectionModel<K extends string | symbol | number> extends SvelteSt
    * @param items liternal forms for items
    * @returns model instance
    */
-  static build<K extends string | symbol | number>(
-    ...items: SelectionItemLiteral<K>[]
-  ): SelectionModel<K> {
+  static build<K extends string | symbol | number, D = unknown>(
+    ...items: SelectionItemLiteral<K, D>[]
+  ): SelectionModel<K, D> {
     checkDuplicatedKey(items);
     const tabItems = items.map(
-      ({ key, label, userData, content }) => new SelectionItem<K>(key, label, userData, content)
+      ({ key, label, userData, content }) => new SelectionItem<K, D>(key, label, userData, content)
     );
-    return new SelectionModel<K>(tabItems);
+    return new SelectionModel<K, D>(tabItems);
   }
 }
