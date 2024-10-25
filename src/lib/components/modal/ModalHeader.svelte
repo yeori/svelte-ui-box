@@ -47,7 +47,6 @@
   .head {
     display: flex;
     align-items: center;
-    padding: 8px;
     user-select: none;
     margin: 0;
     .bread-crum {

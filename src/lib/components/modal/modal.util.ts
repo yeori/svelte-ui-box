@@ -2,27 +2,17 @@ import { modalContext, type ModalAction } from './modal.context.js';
 import ConfirmModal from './ConfirmModal.svelte';
 
 export const DEFAULT_ACTIONS: ModalAction[] = [
-  { text: 'Ok', event: 'ok' },
-  { text: 'Cancel', event: 'cancel' }
+  { text: 'Ok', event: 'yes' },
+  { text: 'Cancel', event: 'no' }
 ];
 
 export class ConfirmModalSpec {
-  title: string;
-  _message: string;
-  actions: ModalAction[];
   constructor(
-    title: string,
-    message: string,
-    actions: ModalAction[],
+    readonly title: string | undefined,
+    readonly message: string,
+    readonly actions: ModalAction[] | undefined,
     readonly actionHandler: (value: string, action?: ModalAction) => void
-  ) {
-    this.title = title;
-    this._message = message;
-    this.actions = actions;
-  }
-  get message() {
-    return this._message;
-  }
+  ) {}
 }
 
 export type ConfirModal = {
@@ -36,10 +26,11 @@ export const createConfirmModal = ({ title, message, actionSpecs, onActionClick 
   const actions = actionSpecs
     ? actionSpecs.map((spec) => Object.assign({}, spec))
     : DEFAULT_ACTIONS;
-  return new ConfirmModalSpec(title || 'Title', message, actions, onActionClick || (() => {}));
+  return new ConfirmModalSpec(title, message, actions, onActionClick || (() => {}));
 };
 const startConfirmModal = (modalSpec: ConfirmModalSpec) => {
   return modalContext.startModal({
+    title: modalSpec.title,
     component: ConfirmModal,
     args: { modalSpec },
     mode: 'RESET'
