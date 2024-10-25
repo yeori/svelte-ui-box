@@ -10,6 +10,7 @@ export class ThemeDef<C extends string> {
   readonly bases: ThemeEntity[] = [];
   readonly buttons: ThemeEntity[] = [];
   readonly chips: ThemeEntity[] = [];
+  readonly modals: ThemeEntity[] = [];
   readonly colorSet: Record<C, ColorDef> = {} as Record<C, ColorDef>;
   constructor(readonly prefix = 'svelteuibox') {
     this.icons = {};
@@ -152,6 +153,7 @@ export class ThemeDef<C extends string> {
     base?: Partial<CSSStyleDeclaration>;
     button?: Record<ButtonState, Partial<CSSStyleDeclaration>>;
     chip?: Partial<CSSStyleDeclaration>;
+    modal?: Partial<CSSStyleDeclaration>;
   }) {
     if (def.base) {
       this.bases.push(new ThemeEntity(this.prefix, 'base', 'normal', def.base));
@@ -167,13 +169,17 @@ export class ThemeDef<C extends string> {
     if (def.chip) {
       this.chips.push(new ThemeEntity(this.prefix, 'chip', 'normal', def.chip));
     }
+    if (def.modal) {
+      this.modals.push(new ThemeEntity(this.prefix, 'modal', 'normal', def.modal));
+    }
   }
   insallTheme(el: HTMLElement) {
     const base = this.bases.flatMap((entity) => entity.getVariabels());
     const button = this.buttons.flatMap((entity) => entity.getVariabels());
     const chip = this.chips.flatMap((entity) => entity.getVariabels());
+    const modals = this.modals.flatMap((entity) => entity.getVariabels());
 
-    [...base, ...button, ...chip].forEach(([k, v]) => {
+    [...base, ...button, ...chip, ...modals].forEach(([k, v]) => {
       el.style.setProperty(k, v);
     });
   }

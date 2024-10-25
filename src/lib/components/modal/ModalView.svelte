@@ -98,6 +98,8 @@
     .modal-inner {
       position: relative;
       width: 100%;
+      background: var(--svelteuibox-modal-normal-background, inherit);
+      color: var(--svelteuibox-modal-normal-color, inherit);
       &.center {
         top: 50%;
         left: 50%;
@@ -121,6 +123,7 @@
         box-shadow: var(--modal-shadow);
         box-sizing: border-box;
         padding: 0;
+        background: inherit;
         &.fullscreen {
           height: 100%;
           overflow-y: hidden;
