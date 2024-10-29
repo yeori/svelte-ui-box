@@ -25,6 +25,11 @@ export class SvelteUiBox<C extends string> {
   get colors() {
     return this.theme!.colors;
   }
+  createUuid(prefix: string): string {
+    const t = new Date().getTime().toString(36).substring(2);
+    const rand = Math.random().toString(36).substring(2);
+    return `${prefix}-${t}-${rand}`;
+  }
   parseCssVar(style: Record<string, string>, target: string) {
     const prefix = `${this.prefix}-${target}`;
     return UIHelper.resolveStyles(style, prefix);

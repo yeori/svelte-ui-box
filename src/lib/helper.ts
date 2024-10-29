@@ -26,13 +26,13 @@ export class UIHelper {
       .join(';');
   }
   static parseSizeUnit = (value: string): [number, string] => {
-    const regex = /^(\d*\.?\d+)([a-zA-Z%]+)$/;
+    const regex = /^(\d*\.?\d+)([a-zA-Z%]*)/;
     const match = value.trim().match(regex);
 
     if (match) {
       const num = Number.parseFloat(match[1]);
       const unit = match[2];
-      return [num, unit];
+      return [num, unit || 'px'];
     } else {
       return [1, 'rem'];
     }
@@ -58,6 +58,15 @@ export class UIHelper {
       const key = keyGetter(dashed);
       const value = style[prop] || 'unset';
       return [key, String(value)];
+    });
+  }
+  static parseRecord(
+    record: Record<string, string>,
+    keyGetter: (key: string) => string = (key) => key
+  ) {
+    return UIHelper.keys(record).map((prop) => {
+      const key = keyGetter(prop);
+      return [key, record[prop]];
     });
   }
   /**

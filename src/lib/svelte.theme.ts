@@ -174,12 +174,27 @@ export class ThemeDef<C extends string> {
     }
   }
   insallTheme(el: HTMLElement) {
+    const { prefix } = this;
+    const colorSet = Object.entries(this.colorSet).reduce(
+      (set, [name, value]) => {
+        const { bgc, fgc } = value as ColorDef;
+        bgc.forEach((color, index) => {
+          set[`color-${name}-bgc${index}`] = color;
+        });
+        fgc.forEach((color, index) => {
+          set[`color-${name}-fgc${index}`] = color;
+        });
+        return set;
+      },
+      {} as Record<string, string>
+    );
+    const colors = UIHelper.parseRecord(colorSet, (prop) => `--${prefix}-${prop}`);
     const base = this.bases.flatMap((entity) => entity.getVariabels());
     const button = this.buttons.flatMap((entity) => entity.getVariabels());
     const chip = this.chips.flatMap((entity) => entity.getVariabels());
     const modals = this.modals.flatMap((entity) => entity.getVariabels());
 
-    [...base, ...button, ...chip, ...modals].forEach(([k, v]) => {
+    [...colors, ...base, ...button, ...chip, ...modals].forEach(([k, v]) => {
       el.style.setProperty(k, v);
     });
   }
