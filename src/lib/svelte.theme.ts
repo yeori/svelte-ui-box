@@ -63,6 +63,10 @@ export class ThemeDef<C extends string> {
   resolveIcon(model: IconModel) {
     if (model.icon) {
       let [prefix, icon] = model.icon.split(':');
+      if (prefix === 'https' || prefix === 'http') {
+        prefix = 'default';
+        icon = `${prefix}:${icon}`;
+      }
       if (!icon) {
         icon = prefix;
         prefix = 'default';
