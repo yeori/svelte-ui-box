@@ -20,6 +20,7 @@ export class SwitchModel extends SvelteStore<SwitchModel> implements SwitchParam
   ) {
     super();
     this.uuid = ctx.createUuid('swtch');
+    this._checked = this.param.checked === undefined ? true : this.param.checked;
   }
   get width() {
     return this.widthText;
