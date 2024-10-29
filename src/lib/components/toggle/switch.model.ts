@@ -49,6 +49,8 @@ export class SwitchModel extends SvelteStore<SwitchModel> implements SwitchParam
           this.update();
         }
       });
+    } else {
+      this._checked = checked;
     }
   }
   get heightData(): [number, string] {
