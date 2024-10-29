@@ -46,6 +46,10 @@ export class ThemeDef<C extends string> {
     const { icon } = model;
     if (icon) {
       let [prefix, path] = icon.split(':');
+      if (prefix === 'https' || prefix === 'http') {
+        prefix = 'default';
+        path = icon;
+      }
       if (!path) {
         path = prefix;
         prefix = 'default';
