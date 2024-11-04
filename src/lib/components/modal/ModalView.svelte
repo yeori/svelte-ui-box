@@ -114,6 +114,11 @@
       &.lg {
         max-width: 720px;
       }
+      &.fullscreen {
+        max-width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
       dialog {
         display: block;
         position: relative;
